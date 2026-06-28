@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="C172RG Start">
+<meta name="theme-color" content="#0b1220">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>C172RG Startstrecke</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#0b1220;color:#e5e7eb}body{margin:0;padding:18px}.app{max-width:520px;margin:auto}h1{font-size:28px;margin:10px 0 5px}.sub{color:#a7b0c0;margin-bottom:14px;line-height:1.35}.card{background:#111827;border:1px solid #293241;border-radius:18px;padding:16px;margin:12px 0}label{display:block;font-size:14px;color:#cbd5e1;margin:0 0 7px}input,select{width:100%;box-sizing:border-box;border-radius:12px;border:1px solid #374151;background:#0f172a;color:#fff;padding:13px;font-size:18px}button{width:100%;border:0;border-radius:14px;padding:15px 16px;font-size:18px;font-weight:700;background:#2563eb;color:white;margin-top:14px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.box{border-radius:16px;padding:14px;background:#0f172a;border:1px solid #334155;margin-bottom:10px}.name{color:#a7b0c0;font-size:13px}.value{font-size:30px;font-weight:800;margin-top:4px}.warn{background:#3b2f0b;border:1px solid #a16207;color:#fde68a;border-radius:14px;padding:12px;margin-top:12px;line-height:1.35;display:none}.note{color:#9ca3af;font-size:12px;line-height:1.35;margin-top:14px}.small{font-size:13px;color:#9ca3af;margin-top:4px}@media(max-width:430px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>C172RG Startstrecke</h1>
+<div class="sub">AFM-Tabelle 1198 kg · Kurzstart · trockene ebene Bahn · Wind in kt.</div>
+<div class="card">
+<div class="grid">
+<div><label>QNH (hPa)</label><input id="qnh" type="number" inputmode="decimal" value="1013"></div>
+<div><label>Flugplatzhöhe (ft)</label><input id="elev" type="number" inputmode="decimal" value="1000"></div>
+<div><label>Temperatur (°C)</label><input id="temp" type="number" inputmode="decimal" value="20"></div>
+<div><label>Wind (kt)</label><input id="wind" type="number" inputmode="decimal" value="0"><div class="small">+ Gegenwind / − Rückenwind</div></div>
+</div>
+<div style="margin-top:12px"><label>Untergrund</label><select id="surface"><option value="asphalt">Asphalt</option><option value="grass">Gras trocken</option></select></div>
+<button id="calcBtn" type="button">Berechnen</button>
+</div>
+<div class="card">
+<div class="box"><div class="name">Pressure Altitude</div><div class="value" id="pa">–</div></div>
+<div class="box"><div class="name">Ground Roll / Startlauf</div><div class="value" id="roll">–</div></div>
+<div class="box"><div class="name">Über 15 m Hindernis</div><div class="value" id="over15">–</div></div>
+<div class="warn" id="warn"></div>
+<div class="note">Nicht als zertifizierte Performance-Software verwenden. AFM bleibt massgebend. Gras-Korrektur gemäss AFM nur auf Startlauf +15%. Rückenwind gemäss AFM nur bis 10 kt.</div>
+</div>
+</div>
+<script>
+(function(){
+'use strict';
+const alts=[0,1000,2000,3000,4000,5000,6000,7000,8000];
+const temps=[0,10,20,30,40];
+const table={
+"0":{roll:[291,317,347,381,416,459,506,555,617],over:[489,535,587,646,715,792,885,995,1128]},
+"10":{roll:[312,341,373,408,450,494,544,600,664],over:[522,573,629,695,770,855,959,1081,1233]},
+"20":{roll:[335,366,401,439,483,530,585,646,716],over:[559,614,675,747,828,924,1038,1178,1353]},
+"30":{roll:[358,391,430,471,518,570,629,695,771],over:[599,657,725,802,893,1000,1127,1286,1492]},
+"40":{roll:[384,419,460,504,555,611,675,747,829],over:[640,704,777,863,963,1082,1227,1411,1655]}
+};
+function num(id){return Number(String(document.getElementById(id).value).replace(',','.'));}
+function clamp(x,min,max){return Math.min(Math.max(x,min),max);}
+function bounds(arr,x){x=clamp(x,arr[0],arr[arr.length-1]);for(let i=0;i<arr.length-1;i++){if(x>=arr[i]&&x<=arr[i+1])return[arr[i],arr[i+1]];}return[arr[arr.length-1],arr[arr.length-1]];}
+function lerp(x,x0,x1,y0,y1){return x0===x1?y0:y0+(x-x0)*(y1-y0)/(x1-x0);}
+function valueAt(temp,pa,kind){
+ const tc=clamp(temp,0,40), pc=clamp(pa,0,8000);
+ const [t0,t1]=bounds(temps,tc), [a0,a1]=bounds(alts,pc);
+ const i0=alts.indexOf(a0), i1=alts.indexOf(a1);
+ const v00=table[String(t0)][kind][i0], v01=table[String(t0)][kind][i1];
+ const v10=table[String(t1)][kind][i0], v11=table[String(t1)][kind][i1];
+ const va0=lerp(pc,a0,a1,v00,v01), va1=lerp(pc,a0,a1,v10,v11);
+ return lerp(tc,t0,t1,va0,va1);
+}
+function showWarn(lines){const w=document.getElementById('warn'); if(lines.length){w.style.display='block';w.textContent=lines.join(' ');}else{w.style.display='none';w.textContent='';}}
+function calculate(){
+ try{
+  const qnh=num('qnh'), elev=num('elev'), temp=num('temp'), wind=num('wind');
+  if([qnh,elev,temp,wind].some(n=>!Number.isFinite(n))){showWarn(['Bitte alle Werte eingeben.']);return;}
+  const pa=elev+((1013-qnh)*30);
+  const warnings=[];
+  if(pa<0||pa>8000)warnings.push('Pressure Altitude ausserhalb der Tabelle: Berechnung am Tabellenrand begrenzt.');
+  if(temp<0||temp>40)warnings.push('Temperatur ausserhalb der Tabelle: Berechnung am Tabellenrand begrenzt.');
+  if(wind<-10)warnings.push('Rückenwind über 10 kt: ausserhalb AFM-Hinweis.');
+  let roll=valueAt(temp,pa,'roll'), over=valueAt(temp,pa,'over');
+  let windFactor=1;
+  if(wind>0)windFactor=Math.max(0,1-0.10*(wind/9));
+  if(wind<0)windFactor=1+0.10*(Math.abs(wind)/2);
+  roll*=windFactor; over*=windFactor;
+  if(document.getElementById('surface').value==='grass') roll*=1.15;
+  document.getElementById('pa').textContent=Math.round(pa)+' ft';
+  document.getElementById('roll').textContent=Math.round(roll)+' m';
+  document.getElementById('over15').textContent=Math.round(over)+' m';
+  showWarn(warnings);
+ }catch(e){showWarn(['Fehler in der Berechnung: '+e.message]);}
+}
+document.getElementById('calcBtn').addEventListener('click',calculate);
+['qnh','elev','temp','wind','surface'].forEach(id=>document.getElementById(id).addEventListener('input',calculate));
+calculate();
+})();
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('./sw.js').catch(function(){});
+  });
+}
+</script>
+</body>
+</html>
