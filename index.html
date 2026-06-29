@@ -4,35 +4,54 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="C172RG Start">
-<meta name="theme-color" content="#0b1220">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon-192.png">
-<title>C172RG Startstrecke</title>
+<meta name="apple-mobile-web-app-title" content="C172RG Assistant">
+<title>C172RG Flight Assistant</title>
 <style>
-:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#0b1220;color:#e5e7eb}body{margin:0;padding:18px}.app{max-width:520px;margin:auto}h1{font-size:28px;margin:10px 0 5px}.sub{color:#a7b0c0;margin-bottom:14px;line-height:1.35}.card{background:#111827;border:1px solid #293241;border-radius:18px;padding:16px;margin:12px 0}label{display:block;font-size:14px;color:#cbd5e1;margin:0 0 7px}input,select{width:100%;box-sizing:border-box;border-radius:12px;border:1px solid #374151;background:#0f172a;color:#fff;padding:13px;font-size:18px}button{width:100%;border:0;border-radius:14px;padding:15px 16px;font-size:18px;font-weight:700;background:#2563eb;color:white;margin-top:14px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.box{border-radius:16px;padding:14px;background:#0f172a;border:1px solid #334155;margin-bottom:10px}.name{color:#a7b0c0;font-size:13px}.value{font-size:30px;font-weight:800;margin-top:4px}.warn{background:#3b2f0b;border:1px solid #a16207;color:#fde68a;border-radius:14px;padding:12px;margin-top:12px;line-height:1.35;display:none}.note{color:#9ca3af;font-size:12px;line-height:1.35;margin-top:14px}.small{font-size:13px;color:#9ca3af;margin-top:4px}@media(max-width:430px){.grid{grid-template-columns:1fr}}
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#07111f;color:#e5e7eb;--card:#111827;--box:#0f172a;--line:#263244;--muted:#9ca3af;--blue:#2563eb;--green:#16a34a;--yellow:#ca8a04;--red:#dc2626}*{box-sizing:border-box}body{margin:0;padding:16px;padding-bottom:30px}.app{max-width:560px;margin:auto}h1{font-size:28px;margin:8px 0 3px}.sub{color:#a7b0c0;margin-bottom:12px;line-height:1.35}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:15px;margin:12px 0;box-shadow:0 8px 26px rgba(0,0,0,.18)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{display:block;font-size:13px;color:#cbd5e1;margin:0 0 6px}input,select{width:100%;border-radius:12px;border:1px solid #374151;background:var(--box);color:#fff;padding:13px;font-size:18px}button{width:100%;border:0;border-radius:14px;padding:15px 16px;font-size:18px;font-weight:800;background:var(--blue);color:white;margin-top:14px}.small{font-size:12px;color:var(--muted);margin-top:4px}.sectionTitle{font-weight:800;font-size:18px;margin:0 0 10px}.box{border-radius:16px;padding:13px;background:var(--box);border:1px solid #334155;margin-bottom:10px}.name{color:#a7b0c0;font-size:13px}.value{font-size:28px;font-weight:850;margin-top:3px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.pill{border-radius:16px;padding:13px;margin-top:10px;font-weight:900;text-align:center;font-size:24px}.go{background:rgba(22,163,74,.20);border:1px solid rgba(22,163,74,.75);color:#86efac}.tight{background:rgba(202,138,4,.22);border:1px solid rgba(202,138,4,.85);color:#fde68a}.nogo{background:rgba(220,38,38,.22);border:1px solid rgba(220,38,38,.85);color:#fecaca}.warn{background:#3b2f0b;border:1px solid #a16207;color:#fde68a;border-radius:14px;padding:12px;margin-top:12px;line-height:1.35;display:none}.note{color:#9ca3af;font-size:12px;line-height:1.4;margin-top:12px}.metric{font-size:15px;color:#d1d5db;margin-top:5px}.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 12px}.tab{background:#0f172a;border:1px solid #334155;border-radius:12px;padding:11px;text-align:center;font-weight:800}.tab.active{background:#1d4ed8;border-color:#60a5fa}@media(max-width:430px){.grid,.row{grid-template-columns:1fr}.value{font-size:26px}}
 </style>
 </head>
 <body>
 <div class="app">
-<h1>C172RG Startstrecke</h1>
-<div class="sub">AFM-Tabelle 1198 kg · Kurzstart · trockene ebene Bahn · Wind in kt.</div>
+<h1>C172RG Flight Assistant</h1>
+<div class="sub">1198 kg · Kurzstart & Kurzlandung · trockene ebene Bahn · AFM bleibt massgebend.</div>
 <div class="card">
-<div class="grid">
-<div><label>QNH (hPa)</label><input id="qnh" type="number" inputmode="decimal" value="1013"></div>
-<div><label>Flugplatzhöhe (ft)</label><input id="elev" type="number" inputmode="decimal" value="1000"></div>
-<div><label>Temperatur (°C)</label><input id="temp" type="number" inputmode="decimal" value="20"></div>
-<div><label>Wind (kt)</label><input id="wind" type="number" inputmode="decimal" value="0"><div class="small">+ Gegenwind / − Rückenwind</div></div>
-</div>
-<div style="margin-top:12px"><label>Untergrund</label><select id="surface"><option value="asphalt">Asphalt</option><option value="grass">Gras trocken</option></select></div>
-<button id="calcBtn" type="button">Berechnen</button>
+ <div class="sectionTitle">Briefing-Daten</div>
+ <div class="grid">
+  <div><label>QNH (hPa)</label><input id="qnh" type="number" inputmode="decimal" value="1013"></div>
+  <div><label>Flugplatzhöhe (ft)</label><input id="elev" type="number" inputmode="decimal" value="1000"></div>
+  <div><label>Temperatur (°C)</label><input id="temp" type="number" inputmode="decimal" value="20"></div>
+  <div><label>Wind-Komponente (kt)</label><input id="wind" type="number" inputmode="decimal" value="0"><div class="small">+ Gegenwind / − Rückenwind</div></div>
+  <div><label>RWY-Länge verfügbar (m)</label><input id="rwy" type="number" inputmode="decimal" value="460"></div>
+  <div><label>Untergrund</label><select id="surface"><option value="asphalt">Asphalt</option><option value="grass">Gras trocken</option></select></div>
+ </div>
+ <button id="calcBtn" type="button">Berechnen</button>
 </div>
 <div class="card">
-<div class="box"><div class="name">Pressure Altitude</div><div class="value" id="pa">–</div></div>
-<div class="box"><div class="name">Ground Roll / Startlauf</div><div class="value" id="roll">–</div></div>
-<div class="box"><div class="name">Über 15 m Hindernis</div><div class="value" id="over15">–</div></div>
-<div class="warn" id="warn"></div>
-<div class="note">Nicht als zertifizierte Performance-Software verwenden. AFM bleibt massgebend. Gras-Korrektur gemäss AFM nur auf Startlauf +15%. Rückenwind gemäss AFM nur bis 10 kt.</div>
+ <div class="sectionTitle">Atmosphäre</div>
+ <div class="row">
+  <div class="box"><div class="name">Pressure Altitude</div><div class="value" id="pa">–</div></div>
+  <div class="box"><div class="name">Density Altitude</div><div class="value" id="da">–</div></div>
+ </div>
+</div>
+<div class="card">
+ <div class="sectionTitle">✈️ Takeoff</div>
+ <div class="row">
+  <div class="box"><div class="name">Startlauf</div><div class="value" id="toRoll">–</div></div>
+  <div class="box"><div class="name">Über 15 m</div><div class="value" id="toOver">–</div></div>
+ </div>
+ <div class="pill" id="toStatus">–</div>
+ <div class="metric" id="toReserve">–</div>
+</div>
+<div class="card">
+ <div class="sectionTitle">🛬 Landing</div>
+ <div class="row">
+  <div class="box"><div class="name">Landelauf</div><div class="value" id="ldRoll">–</div></div>
+  <div class="box"><div class="name">Über 15 m</div><div class="value" id="ldOver">–</div></div>
+ </div>
+ <div class="pill" id="ldStatus">–</div>
+ <div class="metric" id="ldReserve">–</div>
+ <div class="warn" id="warn"></div>
+ <div class="note">GO/KNAPP/NO GO nach deiner Reserve-Logik: GO ≥ 30% Reserve, KNAPP 15–30%, NO GO &lt;15%. Werte sind Briefing-Hilfe, keine zertifizierte Performance-Software. AFM, Pistenneigung, Zustand, Hindernisse, Technik und persönliche Minima bleiben entscheidend.</div>
 </div>
 </div>
 <script>
@@ -40,60 +59,85 @@
 'use strict';
 const alts=[0,1000,2000,3000,4000,5000,6000,7000,8000];
 const temps=[0,10,20,30,40];
-const table={
+const takeoff={
 "0":{roll:[291,317,347,381,416,459,506,555,617],over:[489,535,587,646,715,792,885,995,1128]},
 "10":{roll:[312,341,373,408,450,494,544,600,664],over:[522,573,629,695,770,855,959,1081,1233]},
 "20":{roll:[335,366,401,439,483,530,585,646,716],over:[559,614,675,747,828,924,1038,1178,1353]},
 "30":{roll:[358,391,430,471,518,570,629,695,771],over:[599,657,725,802,893,1000,1127,1286,1492]},
 "40":{roll:[384,419,460,504,555,611,675,747,829],over:[640,704,777,863,963,1082,1227,1411,1655]}
 };
+const landing={
+"0":{roll:[180,187,194,201,209,216,226,235,244],over:[393,404,413,425,436,448,462,475,489]},
+"10":{roll:[187,194,201,209,216,226,233,242,251],over:[404,413,425,436,448,462,474,488,501]},
+"20":{roll:[194,201,209,216,224,233,242,251,261],over:[413,425,436,448,460,472,486,501,515]},
+"30":{roll:[201,207,215,224,232,241,250,259,270],over:[424,434,446,459,471,485,496,511,529]},
+"40":{roll:[207,215,223,232,239,248,259,268,279],over:[434,445,457,471,483,497,512,526,543]}
+};
 function num(id){return Number(String(document.getElementById(id).value).replace(',','.'));}
 function clamp(x,min,max){return Math.min(Math.max(x,min),max);}
 function bounds(arr,x){x=clamp(x,arr[0],arr[arr.length-1]);for(let i=0;i<arr.length-1;i++){if(x>=arr[i]&&x<=arr[i+1])return[arr[i],arr[i+1]];}return[arr[arr.length-1],arr[arr.length-1]];}
 function lerp(x,x0,x1,y0,y1){return x0===x1?y0:y0+(x-x0)*(y1-y0)/(x1-x0);}
-function valueAt(temp,pa,kind){
+function valueAt(tbl,temp,pa,kind){
  const tc=clamp(temp,0,40), pc=clamp(pa,0,8000);
  const [t0,t1]=bounds(temps,tc), [a0,a1]=bounds(alts,pc);
  const i0=alts.indexOf(a0), i1=alts.indexOf(a1);
- const v00=table[String(t0)][kind][i0], v01=table[String(t0)][kind][i1];
- const v10=table[String(t1)][kind][i0], v11=table[String(t1)][kind][i1];
+ const v00=tbl[String(t0)][kind][i0], v01=tbl[String(t0)][kind][i1];
+ const v10=tbl[String(t1)][kind][i0], v11=tbl[String(t1)][kind][i1];
  const va0=lerp(pc,a0,a1,v00,v01), va1=lerp(pc,a0,a1,v10,v11);
  return lerp(tc,t0,t1,va0,va1);
 }
+function windFactor(windKt){
+ // AFM-Hinweis in den deutschen Tabellen: pro 9 km/h Gegenwind -10%, pro 2 km/h Rückenwind +10%.
+ // Eingabe ist kt; 1 kt = 1.852 km/h.
+ const windKmh=windKt*1.852;
+ if(windKmh>0) return Math.max(0.55,1-0.10*(windKmh/9));
+ if(windKmh<0) return 1+0.10*(Math.abs(windKmh)/2);
+ return 1;
+}
+function setStatus(el,required,rwy){
+ const reserve=rwy-required; const pct=rwy>0?reserve/rwy*100:NaN;
+ el.className='pill';
+ if(!Number.isFinite(rwy)||rwy<=0){el.textContent='RWY fehlt';el.classList.add('nogo');return {reserve,pct};}
+ if(reserve<0 || pct<15){el.textContent='NO GO';el.classList.add('nogo');}
+ else if(pct<30){el.textContent='KNAPP';el.classList.add('tight');}
+ else{el.textContent='GO';el.classList.add('go');}
+ return {reserve,pct};
+}
 function showWarn(lines){const w=document.getElementById('warn'); if(lines.length){w.style.display='block';w.textContent=lines.join(' ');}else{w.style.display='none';w.textContent='';}}
 function calculate(){
- try{
-  const qnh=num('qnh'), elev=num('elev'), temp=num('temp'), wind=num('wind');
-  if([qnh,elev,temp,wind].some(n=>!Number.isFinite(n))){showWarn(['Bitte alle Werte eingeben.']);return;}
-  const pa=elev+((1013-qnh)*30);
-  const warnings=[];
-  if(pa<0||pa>8000)warnings.push('Pressure Altitude ausserhalb der Tabelle: Berechnung am Tabellenrand begrenzt.');
-  if(temp<0||temp>40)warnings.push('Temperatur ausserhalb der Tabelle: Berechnung am Tabellenrand begrenzt.');
-  if(wind<-10)warnings.push('Rückenwind über 10 kt: ausserhalb AFM-Hinweis.');
-  let roll=valueAt(temp,pa,'roll'), over=valueAt(temp,pa,'over');
-  let windFactor=1;
-  if(wind>0)windFactor=Math.max(0,1-0.10*(wind/9));
-  if(wind<0)windFactor=1+0.10*(Math.abs(wind)/2);
-  roll*=windFactor; over*=windFactor;
-  if(document.getElementById('surface').value==='grass') roll*=1.15;
-  document.getElementById('pa').textContent=Math.round(pa)+' ft';
-  document.getElementById('roll').textContent=Math.round(roll)+' m';
-  document.getElementById('over15').textContent=Math.round(over)+' m';
-  showWarn(warnings);
- }catch(e){showWarn(['Fehler in der Berechnung: '+e.message]);}
+ const qnh=num('qnh'), elev=num('elev'), temp=num('temp'), wind=num('wind'), rwy=num('rwy');
+ if([qnh,elev,temp,wind,rwy].some(n=>!Number.isFinite(n))){showWarn(['Bitte alle Werte eingeben.']);return;}
+ const pa=elev+((1013-qnh)*30);
+ const isa=15-(2*(pa/1000));
+ const da=pa+120*(temp-isa);
+ let warnings=[];
+ if(pa<0||pa>8000)warnings.push('Pressure Altitude ausserhalb der Tabelle: Berechnung am Tabellenrand begrenzt.');
+ if(temp<0||temp>40)warnings.push('Temperatur ausserhalb der Tabelle: Berechnung am Tabellenrand begrenzt.');
+ if(wind<0 && Math.abs(wind*1.852)>10)warnings.push('Rückenwind über 10 km/h: ausserhalb AFM-Hinweis.');
+ let toRoll=valueAt(takeoff,temp,pa,'roll'), toOver=valueAt(takeoff,temp,pa,'over');
+ let ldRoll=valueAt(landing,temp,pa,'roll'), ldOver=valueAt(landing,temp,pa,'over');
+ const wf=windFactor(wind);
+ toRoll*=wf; toOver*=wf; ldRoll*=wf; ldOver*=wf;
+ if(document.getElementById('surface').value==='grass'){
+   toRoll*=1.15;     // Start: Gras-Korrektur nur auf Startlauf
+   ldRoll*=1.40;     // Landung: Gras-Korrektur nur auf Landelauf gemäss Tabelle
+ }
+ document.getElementById('pa').textContent=Math.round(pa)+' ft';
+ document.getElementById('da').textContent=Math.round(da)+' ft';
+ document.getElementById('toRoll').textContent=Math.round(toRoll)+' m';
+ document.getElementById('toOver').textContent=Math.round(toOver)+' m';
+ document.getElementById('ldRoll').textContent=Math.round(ldRoll)+' m';
+ document.getElementById('ldOver').textContent=Math.round(ldOver)+' m';
+ const tos=setStatus(document.getElementById('toStatus'),toOver,rwy);
+ const lds=setStatus(document.getElementById('ldStatus'),ldOver,rwy);
+ document.getElementById('toReserve').textContent='Reserve: '+Math.round(tos.reserve)+' m ('+(Number.isFinite(tos.pct)?tos.pct.toFixed(0):'–')+' %)';
+ document.getElementById('ldReserve').textContent='Reserve: '+Math.round(lds.reserve)+' m ('+(Number.isFinite(lds.pct)?lds.pct.toFixed(0):'–')+' %)';
+ showWarn(warnings);
 }
 document.getElementById('calcBtn').addEventListener('click',calculate);
-['qnh','elev','temp','wind','surface'].forEach(id=>document.getElementById(id).addEventListener('input',calculate));
+['qnh','elev','temp','wind','rwy','surface'].forEach(id=>document.getElementById(id).addEventListener('input',calculate));
 calculate();
 })();
-</script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./sw.js').catch(function(){});
-  });
-}
 </script>
 </body>
 </html>
