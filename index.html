@@ -13,7 +13,7 @@
 <body>
 <div class="app">
 <h1>C172RG Flight Assistant</h1>
-<div class="sub">1198 kg · Kurzstart & Kurzlandung · trockene ebene Bahn · AFM bleibt massgebend.</div>
+<div class="sub">1198 kg · Kurzstart & Kurzlandung · trockene ebene Bahn · AFM bleibt massgebend. · v8 Landing-Fix</div>
 <div class="card">
  <div class="sectionTitle">Briefing-Daten</div>
  <div class="grid">
@@ -51,7 +51,7 @@
  <div class="pill" id="ldStatus">–</div>
  <div class="metric" id="ldReserve">–</div>
   <div class="warn" id="warn"></div>
- <div class="note">Takeoff GO/KNAPP/NO GO basiert nur auf der Startlauf-Reserve: grün ab 20 m Reserve, orange 10–19 m, rot 9 m oder weniger. Landing GO/KNAPP/NO GO basiert nur auf der Landelauf-Reserve: grün ab 80 m Reserve, orange 51–79 m, rot 50 m oder weniger. Die 15-m-Strecken werden nur als AFM-Wert angezeigt, ohne Reserve und ohne Warnung. Werte sind Briefing-Hilfe, keine zertifizierte Performance-Software. AFM, Pistenneigung, Zustand, Hindernisse, Technik und persönliche Minima bleiben entscheidend.</div>
+ <div class="note">Takeoff GO/KNAPP/NO GO basiert nur auf der Startlauf-Reserve: grün ab 20 m Reserve, orange 10–19 m, rot unter 10 m. Landing GO/KNAPP/NO GO basiert nur auf der Landelauf-Reserve: grün ab 80 m Reserve, orange 51–79 m, rot 50 m oder weniger. Die 15-m-Strecken werden nur als AFM-Wert angezeigt, ohne Reserve und ohne Warnung. Werte sind Briefing-Hilfe, keine zertifizierte Performance-Software. AFM, Pistenneigung, Zustand, Hindernisse, Technik und persönliche Minima bleiben entscheidend.</div>
 </div>
 </div>
 <script>
@@ -105,7 +105,7 @@ function landingReserveBand(reserve){
  // Landing: >=80 m = grün, 51–79 m = orange, <=50 m oder negativ = rot.
  const shown=Math.round(reserve);
  if(shown>=80) return {band:'green',shown};
- if(shown>50) return {band:'orange',shown};
+ if(shown>=51) return {band:'orange',shown};
  return {band:'red',shown};
 }
 function setStatus(el,required,rwy,mode){
