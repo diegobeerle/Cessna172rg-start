@@ -41,8 +41,7 @@
  </div>
  <div class="pill" id="toStatus">–</div>
  <div class="metric" id="toReserve">–</div>
- <div class="metric resLine" id="toOverReserve">–</div>
-</div>
+ </div>
 <div class="card">
  <div class="sectionTitle">🛬 Landing</div>
  <div class="row">
@@ -51,9 +50,8 @@
  </div>
  <div class="pill" id="ldStatus">–</div>
  <div class="metric" id="ldReserve">–</div>
- <div class="metric resLine" id="ldOverReserve">–</div>
- <div class="warn" id="warn"></div>
- <div class="note">GO/KNAPP/NO GO basiert auf Ground Roll. 15-m-Reserve wird separat farbig angezeigt: grün ≥20 m, orange ≥10 m, rot <10 m. Werte sind Briefing-Hilfe, keine zertifizierte Performance-Software. AFM, Pistenneigung, Zustand, Hindernisse, Technik und persönliche Minima bleiben entscheidend.</div>
+  <div class="warn" id="warn"></div>
+ <div class="note">GO/KNAPP/NO GO basiert nur auf der Ground-Roll-Reserve in Metern: grün ab 20 m Reserve, orange 10–19 m Reserve, rot 9 m Reserve oder weniger. Die 15-m-Strecke wird nur als AFM-Wert angezeigt, ohne Reserve und ohne Warnung. Werte sind Briefing-Hilfe, keine zertifizierte Performance-Software. AFM, Pistenneigung, Zustand, Hindernisse, Technik und persönliche Minima bleiben entscheidend.</div>
 </div>
 </div>
 <script>
@@ -96,23 +94,23 @@ function windFactor(windKt){
  if(windKmh<0) return 1+0.10*(Math.abs(windKmh)/2);
  return 1;
 }
+function reserveBand(reserve){
+ // Exakte Cockpit-Logik nach angezeigter Meter-Reserve:
+ // >=20 m = grün, 10–19 m = orange, <=9 m oder negativ = rot.
+ const shown=Math.round(reserve);
+ if(shown>=20) return {band:'green',shown};
+ if(shown>=10) return {band:'orange',shown};
+ return {band:'red',shown};
+}
 function setStatus(el,required,rwy){
  const reserve=rwy-required; const pct=rwy>0?reserve/rwy*100:NaN;
  el.className='pill';
  if(!Number.isFinite(rwy)||rwy<=0){el.textContent='RWY fehlt';el.classList.add('nogo');return {reserve,pct};}
- if(reserve<0 || pct<15){el.textContent='NO GO';el.classList.add('nogo');}
- else if(pct<30){el.textContent='KNAPP';el.classList.add('tight');}
- else{el.textContent='GO';el.classList.add('go');}
+ const b=reserveBand(reserve);
+ if(b.band==='green'){el.textContent='GO';el.classList.add('go');}
+ else if(b.band==='orange'){el.textContent='KNAPP';el.classList.add('tight');}
+ else{el.textContent='NO GO';el.classList.add('nogo');}
  return {reserve,pct};
-}
-function setOverReserve(el,required,rwy,label){
- const reserve=rwy-required;
- el.className='metric resLine';
- if(!Number.isFinite(rwy)||rwy<=0){el.textContent=label+' 15 m Reserve: RWY fehlt';el.classList.add('resRed');return;}
- el.textContent=label+' 15 m Reserve: '+Math.round(reserve)+' m';
- if(reserve>=20){el.classList.add('resGreen');}
- else if(reserve>=10){el.classList.add('resOrange');}
- else {el.classList.add('resRed');}
 }
 function showWarn(lines){const w=document.getElementById('warn'); if(lines.length){w.style.display='block';w.textContent=lines.join(' ');}else{w.style.display='none';w.textContent='';}}
 function calculate(){
@@ -143,8 +141,6 @@ function calculate(){
  const lds=setStatus(document.getElementById('ldStatus'),ldRoll,rwy);
  document.getElementById('toReserve').textContent='Ground Roll Reserve: '+Math.round(tos.reserve)+' m ('+(Number.isFinite(tos.pct)?tos.pct.toFixed(0):'–')+' %)';
  document.getElementById('ldReserve').textContent='Ground Roll Reserve: '+Math.round(lds.reserve)+' m ('+(Number.isFinite(lds.pct)?lds.pct.toFixed(0):'–')+' %)';
- setOverReserve(document.getElementById('toOverReserve'),toOver,rwy,'Takeoff');
- setOverReserve(document.getElementById('ldOverReserve'),ldOver,rwy,'Landing');
  showWarn(warnings);
 }
 document.getElementById('calcBtn').addEventListener('click',calculate);
